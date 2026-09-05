@@ -46,3 +46,11 @@ export function deleteRepository(id) {
     method: "DELETE",
   });
 }
+
+export function getFiles(repositoryId) {
+  return request(`/files/${repositoryId}`);
+}
+
+export function getFile(repositoryId, fileId) {
+  return request(`/files/${repositoryId}/${fileId}`);
+}

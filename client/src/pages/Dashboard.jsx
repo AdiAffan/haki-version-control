@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import {
   getRepositories,
@@ -11,6 +12,8 @@ import RepositoryCard from "../components/RepositoryCard";
 import RepositoryModal from "../components/RepositoryModal";
 
 function Dashboard() {
+  const navigate = useNavigate();
+
   const [repositories, setRepositories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -23,7 +26,6 @@ function Dashboard() {
     description: "",
   });
 
-  // Load repositories
   async function loadRepositories() {
     try {
       setLoading(true);
@@ -40,12 +42,10 @@ function Dashboard() {
     }
   }
 
-  // Load repositories when page opens
   useEffect(() => {
     loadRepositories();
   }, []);
 
-  // Open create modal
   function openCreateModal() {
     setEditingRepository(null);
 
@@ -58,7 +58,6 @@ function Dashboard() {
     setModalOpen(true);
   }
 
-  // Open edit modal
   function openEditModal(repository) {
     setEditingRepository(repository);
 
@@ -71,7 +70,6 @@ function Dashboard() {
     setModalOpen(true);
   }
 
-  // Create / update repository
   async function handleSubmit() {
     try {
       if (!form.name.trim()) {
@@ -102,7 +100,6 @@ function Dashboard() {
     }
   }
 
-  // Delete repository
   async function handleDelete(repository) {
     const confirmed = window.confirm(
       `Delete repository "${repository.name}"?`
@@ -124,9 +121,8 @@ function Dashboard() {
     }
   }
 
-  // Open repository
   function handleOpen(repository) {
-    console.log("Open repository:", repository);
+    navigate(`/repositories/${repository.id}`);
   }
 
   return (
@@ -160,15 +156,12 @@ function Dashboard() {
           </div>
         )}
 
-        {/* Loading */}
+        {/* Repository content */}
         {loading ? (
           <div className="py-20 text-center text-slate-500">
             Loading repositories...
           </div>
-
         ) : repositories.length === 0 ? (
-
-          /* Empty state */
           <div className="mt-10 rounded-2xl border border-dashed border-slate-800 px-6 py-20 text-center">
             <h2 className="text-xl font-semibold">
               No repositories yet
@@ -185,10 +178,7 @@ function Dashboard() {
               Create Repository
             </button>
           </div>
-
         ) : (
-
-          /* Repository list */
           <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {repositories.map((repository) => (
               <RepositoryCard
@@ -203,7 +193,7 @@ function Dashboard() {
         )}
       </div>
 
-      {/* Repository Modal */}
+      {/* Repository modal */}
       <RepositoryModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}

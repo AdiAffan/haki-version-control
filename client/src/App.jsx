@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
+import RepositoryWorkspace from "./pages/RepositoryWorkspace";
 
 function App() {
   return (
@@ -10,6 +11,11 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Dashboard />} />
+
+        <Route
+          path="/repositories/:id"
+          element={<RepositoryWorkspace />}
+        />
       </Routes>
     </BrowserRouter>
   );
