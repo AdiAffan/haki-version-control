@@ -4,6 +4,7 @@ const cors = require("cors");
 const repositoryRoutes = require("./routes/repositoryRoutes");
 const fileRoutes = require("./routes/fileRoutes");
 const commitRoutes = require("./routes/commitRoutes");
+const headRoutes = require("./routes/headRoutes");
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use("/api/repositories", repositoryRoutes);
 app.use("/api/files", fileRoutes);
 app.use("/api/commits", commitRoutes);
+app.use("/api/heads", headRoutes);
 
 app.get("/", (req, res) => {
   res.json({

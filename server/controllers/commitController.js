@@ -1,3 +1,4 @@
+const headService = require("../services/headService");
 const commitService = require("../services/commitService");
 const fileService = require("../services/fileService");
 
@@ -78,6 +79,10 @@ function createCommit(req, res) {
         files,
         latestCommit?.id || null
       );
+    headService.setHead(
+      repositoryId,
+      commit.id
+    );
 
     res.status(201).json({
       success: true,
