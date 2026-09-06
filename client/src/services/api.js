@@ -54,3 +54,17 @@ export function getFiles(repositoryId) {
 export function getFile(repositoryId, fileId) {
   return request(`/files/${repositoryId}/${fileId}`);
 }
+
+export function createFile(repositoryId, file) {
+  return request(`/files/${repositoryId}`, {
+    method: "POST",
+    body: JSON.stringify(file),
+  });
+}
+
+export function updateFile(repositoryId, fileId, file) {
+  return request(`/files/${repositoryId}/${fileId}`, {
+    method: "PUT",
+    body: JSON.stringify(file),
+  });
+}

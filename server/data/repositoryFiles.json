@@ -1,0 +1,29 @@
+[
+  {
+    "id": "file_1788603598102_nhpi2f",
+    "repositoryId": "REPOSITORY_ID",
+    "name": "README.md",
+    "path": "README.md",
+    "content": "# HAKI Version Control\n\nMy first HAKI repository.",
+    "createdAt": "2026-09-05T10:19:58.102Z",
+    "updatedAt": "2026-09-05T10:19:58.102Z"
+  },
+  {
+    "id": "file_1788603830660_x1ynl5",
+    "repositoryId": "repo_1788599331481_4hskju",
+    "name": "README.md",
+    "path": "README.md",
+    "content": "# HAKI Version Control\n\nMy first HAKI repository.",
+    "createdAt": "2026-09-05T10:23:50.660Z",
+    "updatedAt": "2026-09-05T10:23:50.660Z"
+  },
+  {
+    "id": "file_1788673970869_oc3lma",
+    "repositoryId": "repo_1788599331481_4hskju",
+    "name": "index.js",
+    "path": "index.js",
+    "content": "console.log(\"Hello\")\nconsole.log(\"Rohit Gaddar\")",
+    "createdAt": "2026-09-06T05:52:50.869Z",
+    "updatedAt": "2026-09-06T05:58:23.128Z"
+  }
+]

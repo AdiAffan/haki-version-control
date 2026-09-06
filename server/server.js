@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 
 const repositoryRoutes = require("./routes/repositoryRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/repositories", repositoryRoutes);
+app.use("/api/files", fileRoutes);
 
 app.get("/", (req, res) => {
   res.json({
