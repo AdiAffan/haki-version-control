@@ -74,3 +74,20 @@ export function deleteFile(repositoryId, fileId) {
     method: "DELETE",
   });
 }
+
+export function getCommits(repositoryId) {
+  return request(`/commits/${repositoryId}`);
+}
+
+export function getCommit(repositoryId, commitId) {
+  return request(`/commits/${repositoryId}/${commitId}`);
+}
+
+export function createCommit(repositoryId, message) {
+  return request(`/commits/${repositoryId}`, {
+    method: "POST",
+    body: JSON.stringify({
+      message,
+    }),
+  });
+}

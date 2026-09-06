@@ -7,6 +7,8 @@ import {
   createFile,
   updateFile,
   deleteFile,
+  getCommits,
+  createCommit,
 } from "../services/api";
 
 function RepositoryWorkspace() {
@@ -27,6 +29,11 @@ function RepositoryWorkspace() {
     path: "",
     content: "",
   });
+  const [commits, setCommits] = useState([]);
+  const [commitModalOpen, setCommitModalOpen] = useState(false);
+  const [commitMessage, setCommitMessage] = useState("");
+  const [committing, setCommitting] = useState(false);
+
   async function handleCreateFile(event) {
     event.preventDefault();
 
@@ -142,6 +149,40 @@ function RepositoryWorkspace() {
     }
   }
 
+  async function handleCreateCommit(event) {
+    event.preventDefault();
+
+    if (!commitMessage.trim()) {
+      setError("Commit message is required.");
+      return;
+    }
+
+    try {
+      setCommitting(true);
+      setError("");
+
+      const response = await createCommit(
+        id,
+        commitMessage.trim()
+      );
+
+      const newCommit = response.data;
+
+      setCommits((currentCommits) => [
+        newCommit,
+        ...currentCommits,
+      ]);
+
+      setCommitMessage("");
+      setCommitModalOpen(false);
+    } catch (error) {
+      console.error("Failed to create commit:", error);
+      setError(error.message);
+    } finally {
+      setCommitting(false);
+    }
+  }
+
   async function loadWorkspace() {
     try {
       setLoading(true);
@@ -149,12 +190,16 @@ function RepositoryWorkspace() {
 
       const repositoryResponse = await getRepository(id);
       const filesResponse = await getFiles(id);
+      const commitsResponse = await getCommits(id);
 
       setRepository(repositoryResponse.data);
       setFiles(filesResponse.data);
+      setCommits(commitsResponse.data);
 
       if (filesResponse.data.length > 0) {
         setSelectedFile(filesResponse.data[0]);
+      } else {
+        setSelectedFile(null);
       }
     } catch (error) {
       console.error("Failed to load repository:", error);
@@ -397,12 +442,93 @@ function RepositoryWorkspace() {
               Latest commit
             </p>
 
-            <p className="mt-1 text-xs text-slate-600">
-              No commits yet
-            </p>
+            {commits.length > 0 ? (
+              <>
+                <p className="mt-1 text-sm text-slate-400">
+                  {commits[0].message}
+                </p>
+
+                <p className="mt-1 text-xs text-slate-600">
+                  {new Date(
+                    commits[0].createdAt
+                  ).toLocaleString()}
+                </p>
+              </>
+            ) : (
+              <p className="mt-1 text-xs text-slate-600">
+                No commits yet
+              </p>
+            )}
+          </div>
+          <div className="mt-5 overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
+            <div className="flex items-center justify-between border-b border-slate-800 px-5 py-4">
+              <div>
+                <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
+                  Commit History
+                </h2>
+
+                <p className="mt-1 text-xs text-slate-600">
+                  {commits.length}{" "}
+                  {commits.length === 1 ? "commit" : "commits"}
+                </p>
+              </div>
+            </div>
+
+            {commits.length === 0 ? (
+              <div className="px-5 py-10 text-center">
+                <p className="text-sm text-slate-600">
+                  No commits yet
+                </p>
+              </div>
+            ) : (
+              <div className="max-h-[250px] overflow-y-auto">
+                <div className="divide-y divide-slate-800">
+                  {commits.map((commit) => (
+                    <div
+                      key={commit.id}
+                      className="px-5 py-4 transition hover:bg-slate-950"
+                    >
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div className="min-w-0">
+                          <p className="font-medium text-white">
+                            {commit.message}
+                          </p>
+
+                          <p className="mt-1 text-xs text-slate-600">
+                            {new Date(
+                              commit.createdAt
+                            ).toLocaleString()}
+                          </p>
+                        </div>
+
+                        <span className="shrink-0 rounded-md bg-slate-950 px-2 py-1 font-mono text-xs text-slate-600">
+                          {commit.id}
+                        </span>
+                      </div>
+
+                      {commit.parentId && (
+                        <p className="mt-2 text-xs text-slate-700">
+                          Parent:{" "}
+                          <span className="font-mono">
+                            {commit.parentId}
+                          </span>
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          <button className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-400 hover:bg-slate-800 hover:text-white">
+          <button
+            onClick={() => {
+              setError("");
+              setCommitMessage("");
+              setCommitModalOpen(true);
+            }}
+            className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-400 transition hover:bg-slate-800 hover:text-white"
+          >
             Commit Changes
           </button>
         </div>
@@ -512,6 +638,77 @@ function RepositoryWorkspace() {
                 </button>
               </div>
 
+            </form>
+          </div>
+        </div>
+      )}
+      {commitModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4">
+          <div className="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-6 shadow-2xl">
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-white">
+                Commit Changes
+              </h2>
+
+              <button
+                onClick={() => setCommitModalOpen(false)}
+                className="text-xl text-slate-500 hover:text-white"
+              >
+                ×
+              </button>
+            </div>
+
+            <form
+              onSubmit={handleCreateCommit}
+              className="mt-6 space-y-5"
+            >
+              <div>
+                <label className="mb-2 block text-sm font-medium text-slate-300">
+                  Commit Message
+                </label>
+
+                <input
+                  type="text"
+                  value={commitMessage}
+                  onChange={(event) =>
+                    setCommitMessage(event.target.value)
+                  }
+                  placeholder="Describe your changes..."
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-blue-500"
+                />
+              </div>
+
+              <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+                <p className="text-xs uppercase tracking-wider text-slate-600">
+                  Snapshot
+                </p>
+
+                <p className="mt-2 text-sm text-slate-400">
+                  This commit will store the current state of{" "}
+                  <span className="text-white">
+                    {files.length}
+                  </span>{" "}
+                  {files.length === 1 ? "file" : "files"}.
+                </p>
+              </div>
+
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setCommitModalOpen(false)}
+                  className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="submit"
+                  disabled={committing}
+                  className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {committing ? "Committing..." : "Create Commit"}
+                </button>
+              </div>
             </form>
           </div>
         </div>
