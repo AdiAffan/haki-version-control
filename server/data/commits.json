@@ -1,0 +1,38 @@
+[
+  {
+    "id": "commit_1788674981016_5jaedx",
+    "repositoryId": "repo_1788599331481_4hskju",
+    "message": "Initial commit",
+    "parentId": null,
+    "snapshot": [
+      {
+        "fileId": "file_1788603830660_x1ynl5",
+        "name": "README.md",
+        "path": "README.md",
+        "content": "# HAKI Version Control\n\nMy first HAKI repository."
+      }
+    ],
+    "createdAt": "2026-09-06T06:09:41.016Z"
+  },
+  {
+    "id": "commit_1788675204700_ggfu92",
+    "repositoryId": "repo_1788599331481_4hskju",
+    "message": "Update hello.js",
+    "parentId": "commit_1788674981016_5jaedx",
+    "snapshot": [
+      {
+        "fileId": "file_1788603830660_x1ynl5",
+        "name": "README.md",
+        "path": "README.md",
+        "content": "# HAKI Version Control\n\nMy first HAKI repository."
+      },
+      {
+        "fileId": "file_1788675116200_087mgq",
+        "name": "hello.js",
+        "path": "hello.js",
+        "content": "console.log(\"HELLO\")"
+      }
+    ],
+    "createdAt": "2026-09-06T06:13:24.700Z"
+  }
+]
