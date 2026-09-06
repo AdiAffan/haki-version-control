@@ -6,6 +6,7 @@ import {
   getFiles,
   createFile,
   updateFile,
+  deleteFile,
 } from "../services/api";
 
 function RepositoryWorkspace() {
@@ -103,6 +104,41 @@ function RepositoryWorkspace() {
       setError(error.message);
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleDeleteFile() {
+    if (!selectedFile) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete file "${selectedFile.name}"?`
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setError("");
+
+      await deleteFile(id, selectedFile.id);
+
+      const remainingFiles = files.filter(
+        (file) => file.id !== selectedFile.id
+      );
+
+      setFiles(remainingFiles);
+
+      if (remainingFiles.length > 0) {
+        setSelectedFile(remainingFiles[0]);
+      } else {
+        setSelectedFile(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete file:", error);
+      setError(error.message);
     }
   }
 
@@ -304,13 +340,22 @@ function RepositoryWorkspace() {
                     </p>
                   </div>
 
-                  <button
-                    onClick={handleSaveFile}
-                    disabled={saving}
-                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    {saving ? "Saving..." : "Save File"}
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={handleDeleteFile}
+                      className="rounded-lg border border-red-900 px-4 py-2 text-sm font-medium text-red-400 transition hover:bg-red-950"
+                    >
+                      Delete
+                    </button>
+
+                    <button
+                      onClick={handleSaveFile}
+                      disabled={saving}
+                      className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {saving ? "Saving..." : "Save File"}
+                    </button>
+                  </div>
                 </div>
 
                 <div className="flex-1 bg-slate-950 p-6">

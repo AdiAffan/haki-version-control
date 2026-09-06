@@ -68,3 +68,9 @@ export function updateFile(repositoryId, fileId, file) {
     body: JSON.stringify(file),
   });
 }
+
+export function deleteFile(repositoryId, fileId) {
+  return request(`/files/${repositoryId}/${fileId}`, {
+    method: "DELETE",
+  });
+}
