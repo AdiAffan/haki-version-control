@@ -1,0 +1,38 @@
+[
+  {
+    "id": "file_1788603598102_nhpi2f",
+    "repositoryId": "REPOSITORY_ID",
+    "name": "README.md",
+    "path": "README.md",
+    "content": "# HAKI Version Control\n\nMy first HAKI repository.",
+    "createdAt": "2026-09-05T10:19:58.102Z",
+    "updatedAt": "2026-09-05T10:19:58.102Z"
+  },
+  {
+    "id": "file_1788675116200_087mgq",
+    "repositoryId": "repo_1788599331481_4hskju",
+    "name": "hello.js",
+    "path": "hello.js",
+    "content": "console.log(\"HELLO\")\nconsole.log(\"Hello from HAKI!\");",
+    "createdAt": "2026-09-06T06:11:56.200Z",
+    "updatedAt": "2026-09-06T06:21:10.337Z"
+  },
+  {
+    "id": "file_1789582771921_fs1tdu",
+    "repositoryId": "repo_1789582741725_8399b3",
+    "name": "brbrt",
+    "path": "brtwbrb",
+    "content": "rbbrtwrtbrtwbwrbbrt",
+    "createdAt": "2026-09-16T18:19:31.921Z",
+    "updatedAt": "2026-09-16T18:19:54.529Z"
+  },
+  {
+    "id": "file_1789584068087_v0b635",
+    "repositoryId": "repo_1789584051151_akoxmn",
+    "name": "jkrge k r",
+    "path": "erg ierg",
+    "content": "rgergre",
+    "createdAt": "2026-09-16T18:41:08.087Z",
+    "updatedAt": "2026-09-16T18:41:08.087Z"
+  }
+]

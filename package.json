@@ -1,0 +1,26 @@
+{
+  "name": "haki-version-control",
+  "version": "1.0.0",
+  "description": "HAKI is a web-based version control system developed as a college minor project.",
+  "main": "index.js",
+  "scripts": {
+  "client": "npm run dev --prefix client",
+  "server": "npm run dev --prefix server",
+  "dev": "concurrently \"npm run server\" \"npm run client\""
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdiAffan/haki-version-control.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AdiAffan/haki-version-control/issues"
+  },
+  "homepage": "https://github.com/AdiAffan/haki-version-control#readme",
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  }
+}
