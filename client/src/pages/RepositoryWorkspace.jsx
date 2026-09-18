@@ -95,9 +95,9 @@ function RepositoryWorkspace() {
   }
 
   async function handleUploadFile(event) {
-    const file = event.target.files?.[0];
+    const selectedFiles = Array.from(event.target.files || []);
 
-    if (!file) {
+    if (selectedFiles.length === 0) {
       return;
     }
 
@@ -105,26 +105,42 @@ function RepositoryWorkspace() {
       setUploading(true);
       setError("");
 
-      const content = await file.text();
+      const uploadedFiles = [];
 
-      const response = await createFile(id, {
-        name: file.name,
-        path: file.name,
-        content,
-      });
+      for (const file of selectedFiles) {
+        const buffer = await file.arrayBuffer();
+        const bytes = new Uint8Array(buffer);
+        let binary = "";
+        const chunkSize = 8192;
 
-      const uploadedFile = response.data;
+        for (let index = 0; index < bytes.length; index += chunkSize) {
+          binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+        }
+
+        const content = btoa(binary);
+        const filePath = file.webkitRelativePath || file.name;
+        const response = await createFile(id, {
+          name: file.name,
+          path: filePath,
+          content,
+          encoding: "base64",
+          mimeType: file.type || "application/octet-stream",
+          size: file.size,
+        });
+        uploadedFiles.push(response.data);
+      }
 
       setFiles((currentFiles) => [
         ...currentFiles,
-        uploadedFile,
+        ...uploadedFiles,
       ]);
 
-      setSelectedFile(uploadedFile);
-      setEditedContent(content);
+      const lastUploadedFile = uploadedFiles[uploadedFiles.length - 1];
+      setSelectedFile(lastUploadedFile);
+      setEditedContent(lastUploadedFile.content || "");
     } catch (error) {
-      console.error("Failed to upload file:", error);
-      setError(error.message || "Failed to upload file.");
+      console.error("Failed to upload files:", error);
+      setError(error.message || "Failed to upload files.");
     } finally {
       setUploading(false);
       event.target.value = "";
@@ -370,8 +386,22 @@ function RepositoryWorkspace() {
 
               <input
                 type="file"
-                accept=".html,.htm,.css,.js,.jsx,.ts,.tsx,.json,.md,.txt,.svg,.xml"
+                accept="*/*"
                 className="hidden"
+                onChange={handleUploadFile}
+                disabled={uploading}
+              />
+            </label>
+
+            <label className="cursor-pointer rounded-lg border border-slate-700 px-4 py-2 text-sm font-medium text-slate-300 transition hover:bg-slate-800 hover:text-white">
+              {uploading ? "Uploading..." : "📁 Upload Folder"}
+
+              <input
+                type="file"
+                className="hidden"
+                webkitdirectory="true"
+                directory="true"
+                multiple
                 onChange={handleUploadFile}
                 disabled={uploading}
               />
@@ -448,7 +478,7 @@ function RepositoryWorkspace() {
 
                       <input
                         type="file"
-                        accept=".html,.htm,.css,.js,.jsx,.ts,.tsx,.json,.md,.txt,.svg,.xml"
+                        accept="*/*"
                         className="hidden"
                         onChange={handleUploadFile}
                         disabled={uploading}
@@ -465,58 +495,7 @@ function RepositoryWorkspace() {
                   </div>
                 </div>
 
-              ) : false ? (
-
-                <div className="space-y-1">
-
-                  {files.map((file) => (
-
-                    <button
-                      key={file.id}
-                      onClick={() =>
-                        setSelectedFile(file)
-                      }
-                      className={`w-full rounded-lg px-3 py-3 text-left text-sm transition ${
-                        selectedFile?.id === file.id
-                          ? "bg-slate-800 text-white"
-                          : "text-slate-400 hover:bg-slate-900 hover:text-white"
-                      }`}
-                    >
-
-                      <div className="flex items-center gap-3">
-
-                        <span className="text-slate-500">
-                          {file.name
-                            ?.toLowerCase()
-                            .endsWith(".svg")
-                            ? "🖼️"
-                            : "📄"}
-                        </span>
-
-                        <div className="min-w-0">
-
-                          <p className="truncate font-medium">
-                            {file.name}
-                          </p>
-
-                          {file.path !==
-                            file.name && (
-                            <p className="truncate text-xs text-slate-600">
-                              {file.path}
-                            </p>
-                          )}
-
-                        </div>
-
-                      </div>
-
-                    </button>
-
-                  ))}
-
-                </div>
-
-              )}
+              ) : null}
 
             </div>
           </aside>
@@ -606,7 +585,7 @@ function RepositoryWorkspace() {
 
                     <input
                       type="file"
-                      accept=".html,.htm,.css,.js,.jsx,.ts,.tsx,.json,.md,.txt,.svg,.xml"
+                      accept="*/*"
                       className="hidden"
                       onChange={handleUploadFile}
                       disabled={uploading}
