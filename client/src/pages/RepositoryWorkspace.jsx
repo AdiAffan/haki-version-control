@@ -417,8 +417,10 @@ function RepositoryWorkspace() {
 
               <DirectoryTree
                 files={files}
+                selectedFileId={selectedFile?.id}
                 onFileSelect={(file) => {
                   setSelectedFile(file);
+                  setEditedContent(file.content || "");
                 }}
               />
 
@@ -463,7 +465,7 @@ function RepositoryWorkspace() {
                   </div>
                 </div>
 
-              ) : (
+              ) : false ? (
 
                 <div className="space-y-1">
 
