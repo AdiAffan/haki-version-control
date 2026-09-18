@@ -9,5 +9,101 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/logo.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Haki Version Control</title>
+  </head>
+  <body>
+
+    <div2 id="cursor2"></div2>
+    <div1 id="cursor1"></div1>
+
+    <style>
+
+        body {
+            height: 100vh;
+            width: 100%;
+            cursor: -moz-zoom-in;
+            overflow: hidden;
+        }
+
+        div1 {
+            height: 20px;
+            width: 20px;
+            background-color: #ffb6e6;
+            position: absolute;
+            border: 2px solid #ffffff;
+            border-radius: 100%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 15px #ff69c9;
+            cursor: pointer;
+        }
+
+        div2 {
+            height: 40px;
+            width: 40px;
+            background-color: transparent;
+            position: absolute;
+            border: 2px solid #ff69c9;
+            border-radius: 100%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            box-shadow: 0 0 20px #ff1493;
+            cursor: pointer;
+        }
+
+    </style>
+
+    <script>
+
+        let f = document.querySelector("div1");
+        let b = document.querySelector("body");
+        let s = document.querySelector("div2");
+
+        let mouseX = 0;
+        let mouseY = 0;
+
+        let cursorX = 0;
+        let cursorY = 0;
+
+        b.addEventListener("mousemove", function(rohit) {
+
+            mouseX = rohit.clientX;
+            mouseY = rohit.clientY;
+
+            f.style.left = mouseX + "px";
+            f.style.top = mouseY + "px";
+
+        });
+
+        function animate() {
+
+            cursorX += (mouseX - cursorX) * 0.08;
+            cursorY += (mouseY - cursorY) * 0.08;
+
+            s.style.left = cursorX + "px";
+            s.style.top = cursorY + "px";
+
+            requestAnimationFrame(animate);
+
+        }
+
+        animate();
+
+    </script>
+
+
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+    
   </body>
 </html>
