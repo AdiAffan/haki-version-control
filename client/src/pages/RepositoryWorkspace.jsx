@@ -415,7 +415,12 @@ function RepositoryWorkspace() {
 
             <div className="p-3">
 
-              <DirectoryTree />
+              <DirectoryTree
+                files={files}
+                onFileSelect={(file) => {
+                  setSelectedFile(file);
+                }}
+              />
 
               {files.length === 0 ? (
 
