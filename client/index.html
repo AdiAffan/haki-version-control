@@ -1,109 +1,175 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Haki Version Control</title>
-  </head>
-  <body>
+</head>
+
+<body>
+
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+<script>
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Haki Version Control</title>
-  </head>
-  <body>
+    let f = document.createElement("div1");
+    let s = document.createElement("div2");
 
-    <div2 id="cursor2"></div2>
-    <div1 id="cursor1"></div1>
+    document.body.appendChild(s);
+    document.body.appendChild(f);
 
-    <style>
+    let style = document.createElement("style");
+
+    style.innerHTML = `
 
         body {
-            height: 100vh;
-            width: 100%;
-            cursor: -moz-zoom-in;
-            overflow: hidden;
+            cursor: none !important;
         }
 
         div1 {
-            height: 20px;
-            width: 20px;
-            background-color: #ffb6e6;
-            position: absolute;
-            border: 2px solid #ffffff;
-            border-radius: 100%;
+            height: 15px;
+            width: 15px;
+            background: #a5f3fc;
+            position: fixed;
+            border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            box-shadow: 0 0 15px #ff69c9;
-            cursor: pointer;
+            z-index: 9999;
+            mix-blend-mode: difference;
+
+            box-shadow:
+                0 0 8px #ffffff,
+                0 0 16px #22d3ee,
+                0 0 28px #06b6d4,
+                0 0 40px rgba(255, 255, 255, 0.7);
+
+            transition:
+                transform 0.3s ease,
+                background 0.3s ease;
         }
 
         div2 {
-            height: 40px;
-            width: 40px;
-            background-color: transparent;
-            position: absolute;
-            border: 2px solid #ff69c9;
-            border-radius: 100%;
+            height: 44px;
+            width: 44px;
+            background: rgba(34, 211, 238, 0.035);
+            position: fixed;
+            border: 1px solid rgba(103, 232, 249, 0.9);
+            border-radius: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none;
-            box-shadow: 0 0 20px #ff1493;
-            cursor: pointer;
+            z-index: 9998;
+            mix-blend-mode: difference;
+
+            box-shadow:
+                0 0 15px rgba(34, 211, 238, 0.9),
+                0 0 35px rgba(6, 182, 212, 0.65),
+                0 0 75px rgba(139, 92, 246, 0.4),
+                inset 0 0 18px rgba(34, 211, 238, 0.25),
+                0 0 8px rgba(255, 255, 255, 0.5);
+
+            filter: blur(0.35px);
+
+            transition:
+                width 0.35s ease,
+                height 0.35s ease,
+                border-color 0.35s ease,
+                box-shadow 0.35s ease;
         }
 
-    </style>
+        div1.header-hover {
+            transform: translate(-50%, -50%) scale(1.4);
+            background: #d8b4fe;
 
-    <script>
+            box-shadow:
+                0 0 12px #c084fc,
+                0 0 25px #8b5cf6;
+        }
 
-        let f = document.querySelector("div1");
-        let b = document.querySelector("body");
-        let s = document.querySelector("div2");
+        div2.header-hover {
+            width: 50px;
+            height: 50px;
+            border-color: #c084fc;
 
-        let mouseX = 0;
-        let mouseY = 0;
+            box-shadow:
+                0 0 18px rgba(192, 132, 252, 0.95),
+                0 0 40px rgba(139, 92, 246, 0.7),
+                0 0 90px rgba(124, 58, 237, 0.4),
+                inset 0 0 22px rgba(192, 132, 252, 0.3);
+        }
 
-        let cursorX = 0;
-        let cursorY = 0;
+        header,
+        nav {
+            transition:
+                transform 0.35s ease,
+                filter 0.35s ease;
+        }
 
-        b.addEventListener("mousemove", function(rohit) {
+        header.header-zoom,
+        nav.header-zoom {
+            transform: scale(1.025);
+            filter: drop-shadow(
+                0 0 12px rgba(139, 92, 246, 0.25)
+            );
+        }
 
-            mouseX = rohit.clientX;
-            mouseY = rohit.clientY;
+        header.header-zoom *,
+        nav.header-zoom * {
+            transition: transform 0.3s ease;
+        }
 
-            f.style.left = mouseX + "px";
-            f.style.top = mouseY + "px";
+    `;
 
+    document.head.appendChild(style);
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    let cursorX = 0;
+    let cursorY = 0;
+
+    document.addEventListener("mousemove", function(rohit) {
+
+        mouseX = rohit.clientX;
+        mouseY = rohit.clientY;
+
+        f.style.left = mouseX + "px";
+        f.style.top = mouseY + "px";
+
+        let target = rohit.target.closest("header, nav");
+
+        document.querySelectorAll("header, nav").forEach((element) => {
+            element.classList.remove("header-zoom");
         });
 
-        function animate() {
-
-            cursorX += (mouseX - cursorX) * 0.08;
-            cursorY += (mouseY - cursorY) * 0.08;
-
-            s.style.left = cursorX + "px";
-            s.style.top = cursorY + "px";
-
-            requestAnimationFrame(animate);
-
+        if (target) {
+            f.classList.add("header-hover");
+            s.classList.add("header-hover");
+            target.classList.add("header-zoom");
+        } else {
+            f.classList.remove("header-hover");
+            s.classList.remove("header-hover");
         }
 
-        animate();
+    });
 
-    </script>
+    function animate() {
 
+        cursorX += (mouseX - cursorX) * 0.1;
+        cursorY += (mouseY - cursorY) * 0.1;
 
-    <div id="root"></div>
+        s.style.left = cursorX + "px";
+        s.style.top = cursorY + "px";
+
+        requestAnimationFrame(animate);
+
+    }
+
+    animate();
+
+</script>
     <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
 
-    
-  </body>
+</body>
+
 </html>
