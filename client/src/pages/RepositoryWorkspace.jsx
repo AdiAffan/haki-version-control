@@ -10,6 +10,7 @@ import {
   getCommits,
   createCommit,
 } from "../services/api";
+
 import DirectoryTree from "../components/DirectoryTree";
 
 function RepositoryWorkspace() {
@@ -33,6 +34,8 @@ function RepositoryWorkspace() {
   });
 
   const [commits, setCommits] = useState([]);
+  const [showAllCommits, setShowAllCommits] = useState(false);
+
   const [commitModalOpen, setCommitModalOpen] = useState(false);
   const [commitMessage, setCommitMessage] = useState("");
   const [committing, setCommitting] = useState(false);
@@ -97,9 +100,7 @@ function RepositoryWorkspace() {
   async function handleUploadFile(event) {
     const selectedFiles = Array.from(event.target.files || []);
 
-    if (selectedFiles.length === 0) {
-      return;
-    }
+    if (selectedFiles.length === 0) return;
 
     try {
       setUploading(true);
@@ -110,15 +111,23 @@ function RepositoryWorkspace() {
       for (const file of selectedFiles) {
         const buffer = await file.arrayBuffer();
         const bytes = new Uint8Array(buffer);
+
         let binary = "";
         const chunkSize = 8192;
 
-        for (let index = 0; index < bytes.length; index += chunkSize) {
-          binary += String.fromCharCode(...bytes.subarray(index, index + chunkSize));
+        for (
+          let index = 0;
+          index < bytes.length;
+          index += chunkSize
+        ) {
+          binary += String.fromCharCode(
+            ...bytes.subarray(index, index + chunkSize)
+          );
         }
 
         const content = btoa(binary);
         const filePath = file.webkitRelativePath || file.name;
+
         const response = await createFile(id, {
           name: file.name,
           path: filePath,
@@ -127,6 +136,7 @@ function RepositoryWorkspace() {
           mimeType: file.type || "application/octet-stream",
           size: file.size,
         });
+
         uploadedFiles.push(response.data);
       }
 
@@ -135,7 +145,9 @@ function RepositoryWorkspace() {
         ...uploadedFiles,
       ]);
 
-      const lastUploadedFile = uploadedFiles[uploadedFiles.length - 1];
+      const lastUploadedFile =
+        uploadedFiles[uploadedFiles.length - 1];
+
       setSelectedFile(lastUploadedFile);
       setEditedContent(lastUploadedFile.content || "");
     } catch (error) {
@@ -148,9 +160,7 @@ function RepositoryWorkspace() {
   }
 
   async function handleSaveFile() {
-    if (!selectedFile) {
-      return;
-    }
+    if (!selectedFile) return;
 
     try {
       setSaving(true);
@@ -184,17 +194,13 @@ function RepositoryWorkspace() {
   }
 
   async function handleDeleteFile() {
-    if (!selectedFile) {
-      return;
-    }
+    if (!selectedFile) return;
 
     const confirmed = window.confirm(
       `Delete file "${selectedFile.name}"?`
     );
 
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     try {
       setError("");
@@ -209,9 +215,7 @@ function RepositoryWorkspace() {
 
       if (remainingFiles.length > 0) {
         setSelectedFile(remainingFiles[0]);
-        setEditedContent(
-          remainingFiles[0].content || ""
-        );
+        setEditedContent(remainingFiles[0].content || "");
       } else {
         setSelectedFile(null);
         setEditedContent("");
@@ -250,6 +254,7 @@ function RepositoryWorkspace() {
       setCommitModalOpen(false);
     } catch (error) {
       console.error("Failed to create commit:", error);
+
       setError(
         error.message || "Failed to create commit."
       );
@@ -281,10 +286,8 @@ function RepositoryWorkspace() {
         setEditedContent("");
       }
     } catch (error) {
-      console.error(
-        "Failed to load repository:",
-        error
-      );
+      console.error("Failed to load repository:", error);
+
       setError(
         error.message || "Failed to load repository."
       );
@@ -299,9 +302,7 @@ function RepositoryWorkspace() {
 
   useEffect(() => {
     if (selectedFile) {
-      setEditedContent(
-        selectedFile.content || ""
-      );
+      setEditedContent(selectedFile.content || "");
     }
   }, [selectedFile]);
 
@@ -351,9 +352,7 @@ function RepositoryWorkspace() {
                 Repositories
               </Link>
 
-              <span className="text-slate-700">
-                /
-              </span>
+              <span className="text-slate-700">/</span>
 
               <h1 className="text-xl font-bold">
                 {repository?.name}
@@ -361,8 +360,7 @@ function RepositoryWorkspace() {
             </div>
 
             <p className="mt-1 text-sm text-slate-500">
-              {repository?.description ||
-                "No description"}
+              {repository?.description || "No description"}
             </p>
           </div>
 
@@ -380,9 +378,7 @@ function RepositoryWorkspace() {
             </button>
 
             <label className="cursor-pointer rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700">
-              {uploading
-                ? "Uploading..."
-                : "⬆ Upload File"}
+              {uploading ? "Uploading..." : "⬆ Upload File"}
 
               <input
                 type="file"
@@ -437,9 +433,7 @@ function RepositoryWorkspace() {
 
               <p className="mt-1 text-xs text-slate-600">
                 {files.length}{" "}
-                {files.length === 1
-                  ? "file"
-                  : "files"}
+                {files.length === 1 ? "file" : "files"}
               </p>
             </div>
 
@@ -454,8 +448,7 @@ function RepositoryWorkspace() {
                 }}
               />
 
-              {files.length === 0 ? (
-
+              {files.length === 0 && (
                 <div className="px-3 py-10 text-center">
 
                   <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border border-slate-800 bg-slate-900 text-2xl">
@@ -467,8 +460,7 @@ function RepositoryWorkspace() {
                   </h3>
 
                   <p className="mt-2 text-xs leading-5 text-slate-600">
-                    Create a new file or upload a
-                    file from your computer.
+                    Create a new file or upload a file from your computer.
                   </p>
 
                   <div className="mt-5 flex flex-col gap-2">
@@ -494,8 +486,7 @@ function RepositoryWorkspace() {
 
                   </div>
                 </div>
-
-              ) : null}
+              )}
 
             </div>
           </aside>
@@ -503,7 +494,6 @@ function RepositoryWorkspace() {
           <main className="flex min-w-0 flex-col">
 
             {selectedFile ? (
-
               <>
 
                 <div className="flex items-center justify-between border-b border-slate-800 px-6 py-4">
@@ -534,13 +524,10 @@ function RepositoryWorkspace() {
                       disabled={saving}
                       className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                     >
-                      {saving
-                        ? "Saving..."
-                        : "Save File"}
+                      {saving ? "Saving..." : "Save File"}
                     </button>
 
                   </div>
-
                 </div>
 
                 <div className="flex-1 bg-slate-950 p-6">
@@ -548,9 +535,7 @@ function RepositoryWorkspace() {
                   <textarea
                     value={editedContent}
                     onChange={(event) =>
-                      setEditedContent(
-                        event.target.value
-                      )
+                      setEditedContent(event.target.value)
                     }
                     spellCheck="false"
                     className="h-full min-h-[500px] w-full resize-none rounded-lg border border-slate-800 bg-slate-950 p-4 font-mono text-sm leading-7 text-slate-300 outline-none focus:border-blue-500"
@@ -560,7 +545,6 @@ function RepositoryWorkspace() {
                 </div>
 
               </>
-
             ) : (
 
               <div className="flex flex-1 items-center justify-center p-10 text-center">
@@ -576,8 +560,7 @@ function RepositoryWorkspace() {
                   </h2>
 
                   <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-500">
-                    Select a file from your computer
-                    to add it to this repository.
+                    Select a file from your computer to add it to this repository.
                   </p>
 
                   <label className="mt-6 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-blue-600 px-5 py-3 text-sm font-medium text-white transition hover:bg-blue-700">
@@ -593,14 +576,11 @@ function RepositoryWorkspace() {
                   </label>
 
                   <p className="mt-3 text-xs text-slate-600">
-                    HTML, CSS, JS, JSX, JSON, SVG,
-                    Markdown, TXT and XML supported
+                    HTML, CSS, JS, JSX, JSON, SVG, Markdown, TXT and XML supported
                   </p>
 
                 </div>
-
               </div>
-
             )}
 
           </main>
@@ -617,27 +597,19 @@ function RepositoryWorkspace() {
               </p>
 
               {commits.length > 0 ? (
-
                 <>
-
                   <p className="mt-1 text-sm text-slate-400">
                     {commits[0].message}
                   </p>
 
                   <p className="mt-1 text-xs text-slate-600">
-                    {new Date(
-                      commits[0].createdAt
-                    ).toLocaleString()}
+                    {new Date(commits[0].createdAt).toLocaleString()}
                   </p>
-
                 </>
-
               ) : (
-
                 <p className="mt-1 text-xs text-slate-600">
                   No commits yet
                 </p>
-
               )}
 
             </div>
@@ -654,7 +626,6 @@ function RepositoryWorkspace() {
             </button>
 
           </div>
-
         </div>
 
         <div className="mt-5 overflow-hidden rounded-xl border border-slate-800 bg-slate-900">
@@ -667,9 +638,7 @@ function RepositoryWorkspace() {
 
             <p className="mt-1 text-xs text-slate-600">
               {commits.length}{" "}
-              {commits.length === 1
-                ? "commit"
-                : "commits"}
+              {commits.length === 1 ? "commit" : "commits"}
             </p>
 
           </div>
@@ -677,66 +646,86 @@ function RepositoryWorkspace() {
           {commits.length === 0 ? (
 
             <div className="px-5 py-10 text-center">
-
               <p className="text-sm text-slate-600">
                 No commits yet
               </p>
-
             </div>
 
           ) : (
 
-            <div className="max-h-[250px] overflow-y-auto">
+            <>
+              <div className="max-h-[350px] overflow-y-auto">
 
-              <div className="divide-y divide-slate-800">
+                <div className="divide-y divide-slate-800">
 
-                {commits.map((commit) => (
+                  {(showAllCommits
+                    ? commits
+                    : commits.slice(0, 3)
+                  ).map((commit) => (
 
-                  <div
-                    key={commit.id}
-                    className="px-5 py-4 transition hover:bg-slate-950"
-                  >
+                    <div
+                      key={commit.id}
+                      className="px-5 py-4 transition hover:bg-slate-950"
+                    >
 
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
-                      <div className="min-w-0">
+                        <div className="min-w-0">
 
-                        <p className="font-medium text-white">
-                          {commit.message}
-                        </p>
+                          <p className="font-medium text-white">
+                            {commit.message}
+                          </p>
 
-                        <p className="mt-1 text-xs text-slate-600">
-                          {new Date(
-                            commit.createdAt
-                          ).toLocaleString()}
-                        </p>
+                          <p className="mt-1 text-xs text-slate-600">
+                            {new Date(commit.createdAt).toLocaleString()}
+                          </p>
+
+                        </div>
+
+                        <span className="shrink-0 rounded-md bg-slate-950 px-2 py-1 font-mono text-xs text-slate-600">
+                          {commit.id}
+                        </span>
 
                       </div>
 
-                      <span className="shrink-0 rounded-md bg-slate-950 px-2 py-1 font-mono text-xs text-slate-600">
-                        {commit.id}
-                      </span>
+                      {commit.parentId && (
+
+                        <p className="mt-2 text-xs text-slate-700">
+                          Parent:{" "}
+                          <span className="font-mono">
+                            {commit.parentId}
+                          </span>
+                        </p>
+
+                      )}
 
                     </div>
 
-                    {commit.parentId && (
+                  ))}
 
-                      <p className="mt-2 text-xs text-slate-700">
-                        Parent:{" "}
-                        <span className="font-mono">
-                          {commit.parentId}
-                        </span>
-                      </p>
-
-                    )}
-
-                  </div>
-
-                ))}
-
+                </div>
               </div>
 
-            </div>
+              {commits.length > 3 && (
+
+                <div className="border-t border-slate-800 px-5 py-4 text-center">
+
+                  <button
+                    onClick={() =>
+                      setShowAllCommits((current) => !current)
+                    }
+                    className="rounded-lg border border-cyan-500/40 bg-cyan-500/5 px-5 py-2 text-sm font-medium text-cyan-400 transition hover:bg-cyan-500/10 hover:text-cyan-300"
+                  >
+                    {showAllCommits
+                      ? "View Less ↑"
+                      : "View More ↓"}
+                  </button>
+
+                </div>
+
+              )}
+
+            </>
 
           )}
 
@@ -757,9 +746,7 @@ function RepositoryWorkspace() {
               </h2>
 
               <button
-                onClick={() =>
-                  setCreateModalOpen(false)
-                }
+                onClick={() => setCreateModalOpen(false)}
                 className="text-xl text-slate-500 hover:text-white"
               >
                 ×
@@ -843,9 +830,7 @@ function RepositoryWorkspace() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setCreateModalOpen(false)
-                  }
+                  onClick={() => setCreateModalOpen(false)}
                   className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800"
                 >
                   Cancel
@@ -881,9 +866,7 @@ function RepositoryWorkspace() {
               </h2>
 
               <button
-                onClick={() =>
-                  setCommitModalOpen(false)
-                }
+                onClick={() => setCommitModalOpen(false)}
                 className="text-xl text-slate-500 hover:text-white"
               >
                 ×
@@ -906,9 +889,7 @@ function RepositoryWorkspace() {
                   type="text"
                   value={commitMessage}
                   onChange={(event) =>
-                    setCommitMessage(
-                      event.target.value
-                    )
+                    setCommitMessage(event.target.value)
                   }
                   placeholder="Describe your changes..."
                   className="w-full rounded-lg border border-slate-700 bg-slate-950 px-4 py-3 text-white outline-none placeholder:text-slate-600 focus:border-blue-500"
@@ -923,15 +904,11 @@ function RepositoryWorkspace() {
                 </p>
 
                 <p className="mt-2 text-sm text-slate-400">
-                  This commit will store the current
-                  state of{" "}
+                  This commit will store the current state of{" "}
                   <span className="text-white">
                     {files.length}
                   </span>{" "}
-                  {files.length === 1
-                    ? "file"
-                    : "files"}
-                  .
+                  {files.length === 1 ? "file" : "files"}.
                 </p>
 
               </div>
@@ -940,9 +917,7 @@ function RepositoryWorkspace() {
 
                 <button
                   type="button"
-                  onClick={() =>
-                    setCommitModalOpen(false)
-                  }
+                  onClick={() => setCommitModalOpen(false)}
                   className="rounded-lg border border-slate-700 px-4 py-2 text-sm text-slate-300 hover:bg-slate-800"
                 >
                   Cancel
@@ -953,9 +928,7 @@ function RepositoryWorkspace() {
                   disabled={committing}
                   className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {committing
-                    ? "Committing..."
-                    : "Create Commit"}
+                  {committing ? "Committing..." : "Create Commit"}
                 </button>
 
               </div>
