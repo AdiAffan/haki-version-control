@@ -1,4 +1,3 @@
-
 const API_URL = "http://localhost:5000/api";
 
 async function request(endpoint, options = {}) {
@@ -89,5 +88,22 @@ export function createCommit(repositoryId, message) {
     body: JSON.stringify({
       message,
     }),
+  });
+}
+
+export function getBranches(repositoryId) {
+  return request(`/branches/${repositoryId}`);
+}
+
+export function createBranch(repositoryId, data) {
+  return request(`/branches/${repositoryId}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteBranch(repositoryId, branchId) {
+  return request(`/branches/${repositoryId}/${branchId}`, {
+    method: "DELETE",
   });
 }
